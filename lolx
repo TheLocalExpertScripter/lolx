@@ -1,5 +1,5 @@
 local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+local playerGui = game.StarterGui
 
 local function collectUIHierarchy(parent, path)
 	local currentPath = path and (path .. " > " .. parent.Name) or parent.Name
