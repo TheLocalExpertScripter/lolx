@@ -1,0 +1,58 @@
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local function collectUIHierarchy(parent, path)
+	local currentPath = path and (path .. " > " .. parent.Name) or parent.Name
+	local uiList = {}
+
+	for _, child in ipairs(parent:GetChildren()) do
+		if child:IsA("GuiObject") or child:IsA("ScreenGui") then
+			table.insert(uiList, currentPath .. " > " .. child.Name)
+			local childUIList = collectUIHierarchy(child, currentPath)
+			for _, subChild in ipairs(childUIList) do
+				table.insert(uiList, subChild)
+			end
+		end
+	end
+
+	return uiList
+end
+
+local function displayUIHierarchy(uiString)
+	local displayGui = Instance.new("ScreenGui")
+	displayGui.Name = "UIHierarchyDisplay"
+	displayGui.ResetOnSpawn = false
+	displayGui.Parent = playerGui
+
+	local frame = Instance.new("Frame")
+	frame.Size = UDim2.new(0, 361, 0, 268)
+	frame.Position = UDim2.new(0.311, 0, 0.239, 0)
+	frame.BackgroundTransparency = 0.3
+	frame.BackgroundColor3 = Color3.new(0, 0, 0)
+	frame.Parent = displayGui
+
+	local textLabel = Instance.new("TextLabel")
+	textLabel.Size = UDim2.new(0, 361, 0, 268)
+	textLabel.Position = UDim2.new(0, 0, 0, 0)
+	textLabel.Text = uiString
+	textLabel.TextScaled = true 
+	wait(1)
+	textLabel.TextScaled = false
+	textLabel.BackgroundTransparency = 1  
+	textLabel.TextColor3 = Color3.new(1, 1, 1)
+	textLabel.Parent = frame
+end
+
+local function checkAndDisplay(parent)
+	local uiList = collectUIHierarchy(parent)
+
+	if #uiList > 0 then
+		local uiString = table.concat(uiList, "\n")
+
+		displayUIHierarchy(uiString)
+	end
+end
+
+wait(5)
+
+checkAndDisplay(playerGui)
